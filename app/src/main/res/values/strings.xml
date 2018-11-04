@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Micro-Banking System</string>
+    <string name="withdraw">Withdraw</string>
+</resources>
