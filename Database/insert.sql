@@ -18,3 +18,10 @@ insert into customers values('111114444H','Justin Beiber','0713212121','5,wood r
 insert into customers values('111115555H','Ed sheeran','0714212121','7,cemetry road,Jaffna','00007');
 insert into customers values('111116666H','Shayne Ward','0715212121','9,sea road,Badulla','00008');
 insert into customers values('111117777H','Jennifer Lopez','0716212121','11,ocean road,Galle','00009');
+
+insert into accounts values('160111', '111112222H','adult','ok', 15000.00, 'good', '0004');
+insert into accounts values('160112', '111113333H','teen','ok', 20000.00, 'good', '0005');
+insert into accounts values('160113', '111114444H','senior','ok', 150000.00, 'good', '0006');
+insert into accounts values('160114', '111115555H','children','ok', 30000.00, 'good', '0007');
+insert into accounts values('160115', '111116666H','adult','ok', 5000.00, 'good', '0008');
+insert into accounts values('160116', '111117777H','adult','ok', 25000.00, 'good', '0009');
