@@ -9,14 +9,14 @@ create table if not exists branches(
 
 create table if not exists savingInterestRates(
     accountType ENUM('children', 'teen', 'adult', 'senior', 'joint'),
-    interestRate decimal(2,2),
+    interestRate decimal(5,2),
     minimumAmount decimal(15,2),
     primary key (accountType)
 );
 
 create table if not exists fixedInterestRates(
-    duration time,
-    rate float(4),
+    duration int,
+    rate float(5,2),
     primary key (duration)
 );
 
@@ -79,7 +79,7 @@ create table if not exists fixedAccounts(
     acountNumber varchar(10),
     cutomerNIC varchar(10),
     status varchar(5),
-    duration time,
+    duration int,
     currentBalance decimal(15,2),
     accountDetails varchar(200),
     branch_number varchar(10),
