@@ -25,3 +25,4 @@ insert into accounts values('160113', '111114444H','senior','ok', 150000.00, 'go
 insert into accounts values('160114', '111115555H','children','ok', 30000.00, 'good', '0007');
 insert into accounts values('160115', '111116666H','adult','ok', 5000.00, 'good', '0008');
 insert into accounts values('160116', '111117777H','adult','ok', 25000.00, 'good', '0009');
+insert into accounts values('160117', '111117777H','adult','ok', 35000.00, 'good', '0009');
