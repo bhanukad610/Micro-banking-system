@@ -109,4 +109,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return mCursor;
     }
 
+    public void DeleteData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from transactions where transaction_id = (select max(transaction_id) from transactions)");
+    }
+
 }

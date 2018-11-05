@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDB;
     EditText edit_account_number, edit_amount, edit_details, edit_charges, edit_type;
     CheckBox diposit, withdraw;
-    Button submit, viewdata, viewAccounts;
+    Button submit, viewdata, viewAccounts,delete;
     RadioGroup radioGroup;
     RadioButton radioButton;
 
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         edit_charges = (EditText) findViewById(R.id.editText_charges);
         edit_type = (EditText) findViewById(R.id.editText_type);
         submit = (Button) findViewById(R.id.button_submit);
+        delete = (Button) findViewById(R.id.button_delete);
         viewdata = (Button) findViewById(R.id.button_viewdata);
         viewAccounts = (Button) findViewById(R.id.button_accounts);
         radioGroup = (RadioGroup)findViewById(R.id.radioGroup_type);
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         AddData();
         ViewData();
         ViewAccounts();
+        DeleteData();
 
         //one agent got specific customers
         AddToAccounts("1234", "962232531v","savings", "ok","45000","good account");
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                         boolean isInserted = myDB.insertToTransactions(
                                 edit_account_number.getText().toString(),
                                 edit_type.getText().toString(),
+                                //radioButton.getText().toString(),
                                 date,
                                 time,
                                 edit_amount.getText().toString(),
@@ -159,4 +162,15 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    public void DeleteData(){
+        delete.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        myDB.DeleteData();
+                        makeText(MainActivity.this, "Data deleted", Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+    }
 }
