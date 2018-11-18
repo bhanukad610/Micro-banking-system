@@ -1,4 +1,4 @@
-use centralServer;
+use id7780538_centralserver;
 
 INSERT INTO branches ( branch_number, city)
 VALUES ( '0001', 'Colombo');
@@ -18,9 +18,9 @@ VALUES ( 'senior', 13.00, 1000.00);
 INSERT INTO savingInterestRates ( accountType, interestRate, minimumAmount)
 VALUES ( 'joint', 7.00, 5000.00);
 
-INSERT INTO `fixedInterestRates` (duration, rate) VALUES ('6', '13.00');
-INSERT INTO `fixedInterestRates` (duration, rate) VALUES ('12', '14.00');
-INSERT INTO `fixedInterestRates` (duration, rate) VALUES ('36', '15.00');
+INSERT INTO fixedInterestRates (duration, rate) VALUES ('6', '13.00');
+INSERT INTO fixedInterestRates (duration, rate) VALUES ('12', '14.00');
+INSERT INTO fixedInterestRates (duration, rate) VALUES ('36', '15.00');
 
 INSERT INTO bankingAgents (agent_id, NIC, telephone, name, address, agent_details, branch_number) VALUES ('00001', '859632147H', '0778569321', 'Olliver Qeen', 'Star city, DC', 'Green arrow', '0001');
 INSERT INTO bankingAgents (agent_id, NIC, telephone, name, address, agent_details, branch_number) VALUES ('00002', '859654127H', '07185694321', 'Barry Allen', 'Central city, DC', 'Flash', '0002');

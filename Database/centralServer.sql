@@ -1,9 +1,9 @@
-create database if not exists centralServer;
-use centralServer;
+create database if not exists id7780538_centralserver;
+use id7780538_centralserver;
 
 create table if not exists branches(
     branch_number varchar(10),
-    city varchar(10),
+    city varchar(20),
     primary key (branch_number)
 );
 

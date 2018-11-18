@@ -1,5 +1,5 @@
 #bymelonie
-use centralServer;
+use id7780538_centralserver;
 insert into branches values('0004','Nugegoda');
 insert into branches values('0005','Panadura');
 insert into branches values('0006','Matara');

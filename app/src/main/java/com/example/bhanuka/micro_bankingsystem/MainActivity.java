@@ -2,6 +2,7 @@ package com.example.bhanuka.micro_bankingsystem;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -12,8 +13,26 @@ import android.widget.Toast;
 import android.support.v7.app.AlertDialog;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
 import android.database.Cursor;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static android.widget.Toast.makeText;
+
+
+
+
 
 public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDB;
@@ -22,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     Button submit, viewdata, viewAccounts,delete;
     RadioGroup radioGroup;
     RadioButton radioButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +67,11 @@ public class MainActivity extends AppCompatActivity {
         ViewAccounts();
         DeleteData();
 
-        //one agent got specific customers
+
         AddToAccounts("1234", "962232531v","savings", "ok","45000","good account");
         AddToAccounts("9632", "975423641v","fixed", "ok","23000","good account");
         AddToAccounts("4789", "962145213x","joint", "ok","10000","good account");
+        SendDataToAccounts("160101", "962232531V","teen", "ok","5000.00","good account","0001");
 
     }
 
@@ -81,17 +102,20 @@ public class MainActivity extends AppCompatActivity {
                             makeText(MainActivity.this, "Data inserted", Toast.LENGTH_LONG).show();
                         else
                             makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
+
                     }
-                }
+
+    }
         );
     }
+
 
     public void AddToAccounts(String account_number, String customer_NIC, String account_type, String status, String current_balance, String account_details){
         boolean inserted = myDB.insertToAccounts(account_number, customer_NIC, account_type, status, current_balance, account_details);
         if (inserted = true)
-            System.out.println("succefully added to accounts");
+            System.out.println("successfully added to accounts");
         else
-            System.out.println("error occured");
+            System.out.println("error occurred");
     }
 
 
@@ -138,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         StringBuffer buffer = new StringBuffer();
-                        while (result.moveToNext()){
+                        while (result.moveToNext()) {
                             buffer.append("Account number : " + result.getString(0) + "\n");
                             buffer.append("Customer NIC : " + result.getString(1) + "\n");
                             buffer.append("Type : " + result.getString(2) + "\n");
@@ -173,4 +197,12 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
     }
+
+    public void SendDataToAccounts(String account_number, String customer_NIC, String account_type, String status, String current_balance, String account_details, String branch_number){
+        String type = "sendToAccounts";
+        BackgroundWorker backgroundWorker = new BackgroundWorker(this);
+        backgroundWorker.execute(type, account_number, customer_NIC, account_type, status, current_balance, account_details, branch_number);
+    }
+
+
 }

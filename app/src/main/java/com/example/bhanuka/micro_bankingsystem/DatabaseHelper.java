@@ -5,10 +5,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.Cursor;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.Date;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -113,5 +109,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from transactions where transaction_id = (select max(transaction_id) from transactions)");
     }
+
+    public Cursor CountTransactions(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String q = "SELECT count(transaction_id) FROM " + TRANSACTIONS_TABLE;
+        Cursor mCursor = db.rawQuery(q, null);
+        return mCursor;
+    }
+
 
 }
