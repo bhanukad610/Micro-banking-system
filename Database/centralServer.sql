@@ -90,20 +90,16 @@ create table if not exists fixedAccounts(
 );
 
 create table if not exists transactions(
-    transactionID varchar(5),
+    transactionID int AUTO_INCREMENT,
     acountNumber varchar(10),
     agent_id varchar(10),
     transactionType ENUM('withdraw', 'deposit'),
-    transactionDate DATETIME,
+    date varchar(20),
+    time varchar(10),
     amount decimal(15,2),
-    transactionDetails varchar(100),
+    details varchar(100),
     charges decimal(15,2),
     primary key (transactionID),
     foreign key (acountNumber) references accounts(acountNumber),
     foreign key (agent_id) references bankingAgents(agent_id)
 );
-
-
-
-
-

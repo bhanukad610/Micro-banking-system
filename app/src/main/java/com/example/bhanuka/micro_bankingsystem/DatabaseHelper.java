@@ -2,6 +2,7 @@ package com.example.bhanuka.micro_bankingsystem;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.Cursor;
@@ -115,6 +116,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String q = "SELECT count(transaction_id) FROM " + TRANSACTIONS_TABLE;
         Cursor mCursor = db.rawQuery(q, null);
         return mCursor;
+    }
+
+    public long getTransactionsCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long count = DatabaseUtils.queryNumEntries(db, TRANSACTIONS_TABLE);
+        db.close();
+        return count;
     }
 
 

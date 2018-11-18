@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         AddToAccounts("1234", "962232531v","savings", "ok","45000","good account");
         AddToAccounts("9632", "975423641v","fixed", "ok","23000","good account");
         AddToAccounts("4789", "962145213x","joint", "ok","10000","good account");
-        SendDataToAccounts("160101", "962232531V","teen", "ok","5000.00","good account","0001");
+        //SendDataToAccounts("160101", "962232531V","teen", "ok","5000.00","good account","0001");
 
     }
 
@@ -84,24 +84,42 @@ public class MainActivity extends AppCompatActivity {
         final String time = dateFormat.format(calendar.getTime());
 
 
+
         submit.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        boolean isInserted = myDB.insertToTransactions(
-                                edit_account_number.getText().toString(),
-                                edit_type.getText().toString(),
-                                //radioButton.getText().toString(),
-                                date,
-                                time,
-                                edit_amount.getText().toString(),
-                                edit_details.getText().toString(),
-                                edit_charges.getText().toString());
+                    public void onClick(View v){
+                         String account_number = edit_account_number.getText().toString();
+                         String type = edit_type.getText().toString();
+                         String amount = edit_amount.getText().toString();
+                         String details = edit_details.getText().toString();
+                         String charges = edit_charges.getText().toString();
+                         String agent_id = "00001"; //hardcoded agent_id
+                        SendToTransactions(account_number,agent_id, type, date, time, amount, details, charges);
+                        /*if (Integer.parseInt(charges) == 0){
+                            SendToTransactions(account_number,agent_id, type, date, time, amount, details, charges);
+                        }*/
 
-                        if (isInserted = true)
+
+                        boolean isInserted = myDB.insertToTransactions(account_number, type, date, time, amount, details, charges);
+
+                        if (isInserted = true){
                             makeText(MainActivity.this, "Data inserted", Toast.LENGTH_LONG).show();
-                        else
+                        }
+                        else {
                             makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
+                        }
+                        /*get the number of entries in the transactions table
+                            long transactionsCount = myDB.getTransactionsCount();
+                        int limit = 5;
+
+
+
+                            //if count == 5 send to transactions in central server
+                            if (transactionsCount == (long) limit){
+
+                            }*/
+
 
                     }
 
@@ -202,6 +220,13 @@ public class MainActivity extends AppCompatActivity {
         String type = "sendToAccounts";
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);
         backgroundWorker.execute(type, account_number, customer_NIC, account_type, status, current_balance, account_details, branch_number);
+    }
+
+    public void SendToTransactions(String accountNumber, String account_number, String transactionType, String date, String time, String amount, String transactionDetails, String charges){
+        String type = "sendToTransactions";
+        String agent_id = "00001"; //hardcoded agent_id
+        BackgroundWorker backgroundWorker = new BackgroundWorker(this);
+        backgroundWorker.execute(type, account_number, agent_id, transactionType, date, time, amount, transactionDetails, charges);
     }
 
 
