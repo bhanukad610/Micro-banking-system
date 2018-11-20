@@ -111,12 +111,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("delete from transactions where transaction_id = (select max(transaction_id) from transactions)");
     }
 
-    public Cursor CountTransactions(){
+    /*public Cursor CountTransactions(){
         SQLiteDatabase db = this.getWritableDatabase();
         String q = "SELECT count(transaction_id) FROM " + TRANSACTIONS_TABLE;
         Cursor mCursor = db.rawQuery(q, null);
         return mCursor;
-    }
+    }*/
 
     public long getTransactionsCount() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -137,6 +137,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return false;
     }
+
+    public void UpdateCurrentBalance(String account_number, String amount, String type){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String get_current_balance = "SELECT current_balance from accounts where account_number = "+ account_number;
+        Cursor cursor = db.rawQuery(get_current_balance, null);
+
+        while (cursor.moveToNext()){
+            if (type == "deposit"){
+                String query = "UPDATE " + ACCOUNTS_TABLE + "SET " + COL_5 + "=" + String.valueOf(Float.valueOf(cursor.getString(0)) + Float.valueOf(amount)) + "WHERE account_number = "+account_number;
+            }
+            if (type == "withdraw"){
+                String query = "UPDATE " + ACCOUNTS_TABLE + "SET " + COL_5 + "=" + String.valueOf(Float.valueOf(cursor.getString(0)) - Float.valueOf(amount)) + "WHERE account_number = "+account_number;
+            }
+        }
+
+    }
+
+    public int CountTransactions() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String q = "SELECT count(*) FROM " + TRANSACTIONS_TABLE;
+        Cursor cursor = db.rawQuery(q, null);
+        int count = 0;
+        if(null != cursor){
+            if(cursor.getCount() > 0){
+                cursor.moveToFirst();
+                count = cursor.getInt(0);
+            }
+        cursor.close();
+    }
+
+    db.close();
+    return count;
+}
 
 
 }

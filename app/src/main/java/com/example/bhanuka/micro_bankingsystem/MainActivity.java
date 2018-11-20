@@ -82,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
 
 
                         String charges =  CalculateCharges(account_number,amount);
+
+                        if (charges == "0"){
+                            myDB.UpdateCurrentBalance(account_number, amount,type);
+                        }
+
+
                         //SendToTransactions(account_number,agent_id, type, date, time, amount, details, charges);
                         /*if (Integer.parseInt(charges) == 0){
                             SendToTransactions(account_number,agent_id, type, date, time, amount, details, charges);
@@ -91,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                         boolean isInserted = myDB.insertToTransactions(account_number, type, date, time, amount, details, charges);
 
                         if (isInserted = true){
-                            makeText(MainActivity.this, "Data inserted", Toast.LENGTH_LONG).show();
+                            makeText(MainActivity.this, "Data inserted "+(String.valueOf(myDB.CountTransactions())), Toast.LENGTH_LONG).show();
                         }
                         else {
                             makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
