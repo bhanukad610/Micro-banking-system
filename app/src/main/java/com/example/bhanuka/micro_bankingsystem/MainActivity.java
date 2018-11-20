@@ -2,7 +2,6 @@ package com.example.bhanuka.micro_bankingsystem;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -13,20 +12,8 @@ import android.widget.Toast;
 import android.support.v7.app.AlertDialog;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 import android.database.Cursor;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import static android.widget.Toast.makeText;
 
@@ -36,7 +23,7 @@ import static android.widget.Toast.makeText;
 
 public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDB;
-    EditText edit_account_number, edit_amount, edit_details, edit_charges, edit_type;
+    EditText edit_account_number, edit_amount, edit_details, edit_type;
     CheckBox diposit, withdraw;
     Button submit, viewdata, viewAccounts,delete;
     RadioGroup radioGroup;
@@ -52,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         edit_account_number = (EditText) findViewById(R.id.editText_account_number);
         edit_amount = (EditText) findViewById(R.id.editText_amount);
         edit_details = (EditText) findViewById(R.id.editText_details);
-        edit_charges = (EditText) findViewById(R.id.editText_charges);
         edit_type = (EditText) findViewById(R.id.editText_type);
         submit = (Button) findViewById(R.id.button_submit);
         delete = (Button) findViewById(R.id.button_delete);
@@ -68,9 +54,8 @@ public class MainActivity extends AppCompatActivity {
         DeleteData();
 
 
-        AddToAccounts("1234", "962232531v","savings", "ok","45000","good account");
-        AddToAccounts("9632", "975423641v","fixed", "ok","23000","good account");
-        AddToAccounts("4789", "962145213x","joint", "ok","10000","good account");
+        AddToAccounts("160137", "962232531v","children", "ok","5000.00","good");
+
         //SendDataToAccounts("160101", "962232531V","teen", "ok","5000.00","good account","0001");
 
     }
@@ -93,9 +78,11 @@ public class MainActivity extends AppCompatActivity {
                          String type = edit_type.getText().toString();
                          String amount = edit_amount.getText().toString();
                          String details = edit_details.getText().toString();
-                         String charges = edit_charges.getText().toString();
                          String agent_id = "00001"; //hardcoded agent_id
-                        SendToTransactions(account_number,agent_id, type, date, time, amount, details, charges);
+
+
+                        String charges =  CalculateCharges(account_number,amount);
+                        //SendToTransactions(account_number,agent_id, type, date, time, amount, details, charges);
                         /*if (Integer.parseInt(charges) == 0){
                             SendToTransactions(account_number,agent_id, type, date, time, amount, details, charges);
                         }*/
@@ -109,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
                         else {
                             makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
                         }
+
+
+
                         /*get the number of entries in the transactions table
                             long transactionsCount = myDB.getTransactionsCount();
                         int limit = 5;
@@ -222,12 +212,19 @@ public class MainActivity extends AppCompatActivity {
         backgroundWorker.execute(type, account_number, customer_NIC, account_type, status, current_balance, account_details, branch_number);
     }
 
-    public void SendToTransactions(String accountNumber, String account_number, String transactionType, String date, String time, String amount, String transactionDetails, String charges){
+    public void SendToTransactions(String account_number,String agent_id, String transactionType, String date, String time, String amount, String transactionDetails, String charges){
         String type = "sendToTransactions";
-        String agent_id = "00001"; //hardcoded agent_id
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);
         backgroundWorker.execute(type, account_number, agent_id, transactionType, date, time, amount, transactionDetails, charges);
     }
+
+    public String CalculateCharges(String account_number, String amount){
+        if (myDB.CheckAccountNumber(account_number)){
+            return String.valueOf(Integer.valueOf(amount)*0.01);
+        }
+        return String.valueOf(0);
+    }
+
 
 
 }

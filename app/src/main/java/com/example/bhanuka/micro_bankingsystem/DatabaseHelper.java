@@ -125,5 +125,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
+    public boolean CheckAccountNumber(String account_number) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        String q = "Select * from " + ACCOUNTS_TABLE + " where " + COL_1 + " = " + account_number;
+        Cursor cursor = db.rawQuery(q, null);
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return true;
+        }
+        cursor.close();
+        return false;
+    }
+
 
 }
