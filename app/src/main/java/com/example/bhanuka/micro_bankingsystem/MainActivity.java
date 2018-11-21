@@ -79,44 +79,28 @@ public class MainActivity extends AppCompatActivity {
                          String amount = edit_amount.getText().toString();
                          String details = edit_details.getText().toString();
                          String agent_id = "00001"; //hardcoded agent_id
+                         String charges =  CalculateCharges(account_number,amount);
 
+                        if (charges.equals("0")){
+                            boolean isInserted = myDB.insertToTransactions(account_number, type, date, time, amount, details, charges);
+                            if (isInserted = true){
+                                makeText(MainActivity.this, "Data inserted "+(String.valueOf(myDB.CountTransactions())), Toast.LENGTH_LONG).show();
+                            }
+                            else {
+                                makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
+                            }
 
-                        String charges =  CalculateCharges(account_number,amount);
-
-                        if (charges == "0"){
-                            myDB.UpdateCurrentBalance(account_number, amount,type);
+                            if (myDB.CountTransactions() >= 5){
+                                Cursor result = myDB.getAllData();
+                                while (result.moveToNext()){
+                                    SendToTransactions(result.getString(1),agent_id, result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7));
+                                }
+                                myDB.DeleteAll("transactions");
+                            }
                         }
-
-
-                        //SendToTransactions(account_number,agent_id, type, date, time, amount, details, charges);
-                        /*if (Integer.parseInt(charges) == 0){
+                        else{
                             SendToTransactions(account_number,agent_id, type, date, time, amount, details, charges);
-                        }*/
-
-
-                        boolean isInserted = myDB.insertToTransactions(account_number, type, date, time, amount, details, charges);
-
-                        if (isInserted = true){
-                            makeText(MainActivity.this, "Data inserted "+(String.valueOf(myDB.CountTransactions())), Toast.LENGTH_LONG).show();
                         }
-                        else {
-                            makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
-                        }
-
-
-
-                        /*get the number of entries in the transactions table
-                            long transactionsCount = myDB.getTransactionsCount();
-                        int limit = 5;
-
-
-
-                            //if count == 5 send to transactions in central server
-                            if (transactionsCount == (long) limit){
-
-                            }*/
-
-
                     }
 
     }

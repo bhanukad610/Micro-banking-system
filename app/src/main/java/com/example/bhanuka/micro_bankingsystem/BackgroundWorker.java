@@ -29,7 +29,7 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         String type = params[0];
         String sendToAccount_url = "https://polaapp.000webhostapp.com/sendToAccounts.php";
-        String sendToTransactions_url = "https://polaapp.000webhostapp.com/sendToTransactions.php";
+        String sendToTransactions_url = "https://gringottsapp.000webhostapp.com/sendToTransactions.php";
 
         //SendDataToAccounts
         if (type.equals("sendToAccounts")){

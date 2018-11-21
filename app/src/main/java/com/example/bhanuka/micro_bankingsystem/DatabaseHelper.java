@@ -166,11 +166,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 count = cursor.getInt(0);
             }
         cursor.close();
-    }
+        }
 
     db.close();
     return count;
-}
+    }
+
+    public void DeleteAll(String table_name){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + table_name;
+        db.execSQL(query);
+    }
+
+
 
 
 }
