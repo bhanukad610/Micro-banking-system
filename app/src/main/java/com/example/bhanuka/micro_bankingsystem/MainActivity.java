@@ -55,8 +55,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         AddToAccounts("160137", "962232531v","children", "ok","5000.00","good");
-
-        //SendDataToAccounts("160101", "962232531V","teen", "ok","5000.00","good account","0001");
+        myDB.insertToMinimumBalance("children","0");
+        myDB.insertToMinimumBalance("teen","500");
+        myDB.insertToMinimumBalance("adult","1000");
+        myDB.insertToMinimumBalance("senior","1000");
+        myDB.insertToMinimumBalance("joint","5000");
 
     }
 
@@ -67,9 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         final String time = dateFormat.format(calendar.getTime());
-
-
-
         submit.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -82,24 +82,32 @@ public class MainActivity extends AppCompatActivity {
                          String charges =  CalculateCharges(account_number,amount);
 
                         if (charges.equals("0")){
-                            boolean isInserted = myDB.insertToTransactions(account_number, type, date, time, amount, details, charges);
-                            if (isInserted = true){
-                                makeText(MainActivity.this, "Data inserted "+(String.valueOf(myDB.CountTransactions())), Toast.LENGTH_LONG).show();
-                            }
-                            else {
-                                makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
+                            if (myDB.UpdateCurrentBalance(account_number,amount,type)){
+                                boolean isInserted = myDB.insertToTransactions(account_number, type, date, time, amount, details, charges);
+                                if (isInserted = true){
+                                    makeText(MainActivity.this, "Data inserted "+(String.valueOf(myDB.CountTransactions())), Toast.LENGTH_LONG).show();
+                                }
+                                else {
+                                    makeText(MainActivity.this, "Data not inserted", Toast.LENGTH_LONG).show();
+                                }
+
+                                if (myDB.CountTransactions() >= 5){
+                                    Cursor result = myDB.getAllData();
+                                    while (result.moveToNext()){
+                                        SendToTransactions(result.getString(1),agent_id, result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7));
+                                    }
+                                    myDB.DeleteAll("transactions");
+                                }
                             }
 
-                            if (myDB.CountTransactions() >= 5){
-                                Cursor result = myDB.getAllData();
-                                while (result.moveToNext()){
-                                    SendToTransactions(result.getString(1),agent_id, result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7));
-                                }
-                                myDB.DeleteAll("transactions");
+                            else{
+                                makeText(MainActivity.this, "Account balance is not enough", Toast.LENGTH_LONG).show();
                             }
+
+
                         }
                         else{
-                            SendToTransactions(account_number,agent_id, type, date, time, amount, details, charges);
+                            SendToTransactions(account_number,agent_id, type, time, date, amount, details, charges);
                         }
                     }
 
@@ -115,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
         else
             System.out.println("error occurred");
     }
-
 
     public void ViewData(){
         viewdata.setOnClickListener(
@@ -196,11 +203,6 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    public void SendDataToAccounts(String account_number, String customer_NIC, String account_type, String status, String current_balance, String account_details, String branch_number){
-        String type = "sendToAccounts";
-        BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-        backgroundWorker.execute(type, account_number, customer_NIC, account_type, status, current_balance, account_details, branch_number);
-    }
 
     public void SendToTransactions(String account_number,String agent_id, String transactionType, String date, String time, String amount, String transactionDetails, String charges){
         String type = "sendToTransactions";

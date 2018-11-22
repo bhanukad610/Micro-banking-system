@@ -2,7 +2,6 @@ package com.example.bhanuka.micro_bankingsystem;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.Cursor;
@@ -12,6 +11,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "mobileDB";
     public static final String ACCOUNTS_TABLE = "accounts";
     public static final String TRANSACTIONS_TABLE = "transactions";
+    public static final String MINIMUM_BALANCE = "minimum_balance";
 
     public static final String COL_1 = "account_number";
     public static final String COL_2 = "customer_NIC";
@@ -27,6 +27,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_11 = "transaction_amount";
     public static final String COL_12 = "transaction_details";
     public static final String COL_13 = "transaction_chargers";
+
+    public static final String COL_14 = "account_type";
+    public static final String COL_15 = "amount";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -55,12 +58,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "transaction_chargers INTEGER" +
                 ")");
 
+        db.execSQL("create table " + MINIMUM_BALANCE + "(" +
+                "account_type TEXT PRIMARY KEY NOT NULL REFERENCES accounts(account_type)," +
+                "amount INTEGER NOT NULL)");
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists " + ACCOUNTS_TABLE );
         db.execSQL("drop table if exists " + TRANSACTIONS_TABLE );
+        db.execSQL("drop table if exists " + MINIMUM_BALANCE );
         onCreate(db);
     }
 
@@ -76,6 +84,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long isInsert = db.insert(ACCOUNTS_TABLE, null, contentValues);
         return isInsert != -1;
     }
+
+    public boolean insertToMinimumBalance(String account_type, String amount){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_14, account_type);
+        contentValues.put(COL_15, amount);
+        long isInsert = db.insert(MINIMUM_BALANCE, null, contentValues);
+        return isInsert != -1;
+    }
+
 
     public boolean insertToTransactions(String account_number, String type, String time, String date, String amount, String details, String charges){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -111,22 +129,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("delete from transactions where transaction_id = (select max(transaction_id) from transactions)");
     }
 
-    /*public Cursor CountTransactions(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        String q = "SELECT count(transaction_id) FROM " + TRANSACTIONS_TABLE;
-        Cursor mCursor = db.rawQuery(q, null);
-        return mCursor;
-    }*/
-
-    public long getTransactionsCount() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        long count = DatabaseUtils.queryNumEntries(db, TRANSACTIONS_TABLE);
-        db.close();
-        return count;
-    }
-
     public boolean CheckAccountNumber(String account_number) {
-
         SQLiteDatabase db = this.getWritableDatabase();
         String q = "Select * from " + ACCOUNTS_TABLE + " where " + COL_1 + " = " + account_number;
         Cursor cursor = db.rawQuery(q, null);
@@ -138,21 +141,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    public void UpdateCurrentBalance(String account_number, String amount, String type){
+    public boolean UpdateCurrentBalance(String account_number, String amount, String type){
+        float value = Float.valueOf(amount);
+        System.out.println(value);
         SQLiteDatabase db = this.getWritableDatabase();
-
-        String get_current_balance = "SELECT current_balance from accounts where account_number = "+ account_number;
+        String get_current_balance = "select current_balance ,amount from accounts natural join minimum_balance where account_number = " + account_number;
         Cursor cursor = db.rawQuery(get_current_balance, null);
 
         while (cursor.moveToNext()){
-            if (type == "deposit"){
-                String query = "UPDATE " + ACCOUNTS_TABLE + "SET " + COL_5 + "=" + String.valueOf(Float.valueOf(cursor.getString(0)) + Float.valueOf(amount)) + "WHERE account_number = "+account_number;
+            float current_balance = Float.valueOf(cursor.getString(0));
+            float minimum_balance = Float.valueOf(cursor.getString(1));
+            if (type.equals("deposit")){
+                current_balance = current_balance + value;
+                System.out.println(current_balance);
+                String query = "UPDATE " + ACCOUNTS_TABLE + " SET " + COL_5 + "=" + current_balance + " WHERE account_number = "+account_number;
+                db.execSQL(query);
+                return true;
             }
-            if (type == "withdraw"){
-                String query = "UPDATE " + ACCOUNTS_TABLE + "SET " + COL_5 + "=" + String.valueOf(Float.valueOf(cursor.getString(0)) - Float.valueOf(amount)) + "WHERE account_number = "+account_number;
+            if (type.equals("withdraw")){
+                current_balance = current_balance - value;
+                if (current_balance >= minimum_balance){
+                    System.out.println(current_balance);
+                    String query = "UPDATE " + ACCOUNTS_TABLE + " SET " + COL_5 + "=" + current_balance + " WHERE account_number = "+account_number;
+                    db.execSQL(query);
+                    return true;
+                }
+                else{
+                    return false;
+                }
+
             }
+
         }
 
+        return false;
     }
 
     public int CountTransactions() {
@@ -178,7 +200,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(query);
     }
 
-
-
+    public Cursor getMinimumBalance(String account_number){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "select current_balance ,amount from accounts natural join minimum_balance where account_number = " + account_number;
+        Cursor mCursor = db.rawQuery(query, null);
+        return mCursor;
+    }
 
 }
