@@ -28,55 +28,7 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
         String type = params[0];
-        String sendToAccount_url = "https://polaapp.000webhostapp.com/sendToAccounts.php";
         String sendToTransactions_url = "https://gringottsapp.000webhostapp.com/sendToTransactions.php";
-
-        //SendDataToAccounts
-        if (type.equals("sendToAccounts")){
-            try {
-                String account_number = params[1];
-                String customer_NIC = params[2];
-                String account_type = params[3];
-                String status = params[4];
-                String current_balance = params[5];
-                String account_details = params[6];
-                String branch_number = params[7];
-                URL url = new URL(sendToAccount_url);
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setRequestMethod("POST");
-                httpURLConnection.setDoOutput(true);
-                httpURLConnection.setDoInput(true);
-                OutputStream outputStream = httpURLConnection.getOutputStream();
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                String post_data = URLEncoder.encode("account_number","UTF-8")+"="+URLEncoder.encode(account_number,"UTF-8")+"&"
-                +URLEncoder.encode("customer_NIC","UTF-8")+"="+URLEncoder.encode(customer_NIC,"UTF-8")+"&"
-                +URLEncoder.encode("account_type","UTF-8")+"="+URLEncoder.encode(account_type,"UTF-8")+"&"
-                +URLEncoder.encode("status","UTF-8")+"="+URLEncoder.encode(status,"UTF-8")+"&"
-                +URLEncoder.encode("current_balance","UTF-8")+"="+URLEncoder.encode(current_balance,"UTF-8")+"&"
-                +URLEncoder.encode("account_details","UTF-8")+"="+URLEncoder.encode(account_details,"UTF-8")+"&"
-                +URLEncoder.encode("branch_number","UTF-8")+"="+URLEncoder.encode(branch_number,"UTF-8");
-                bufferedWriter.write(post_data);
-                bufferedWriter.flush();
-                bufferedWriter.close();
-                outputStream.close();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
-                String result = "";
-                String line = "";
-
-                while ((line = bufferedReader.readLine()) != null){
-                    result += line;
-                }
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
-                return result;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
         if (type.equals("sendToTransactions")){
             try {

@@ -23,7 +23,7 @@ import static android.widget.Toast.makeText;
 
 public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDB;
-    EditText edit_account_number, edit_amount, edit_details, edit_type;
+    EditText edit_account_number, edit_amount, edit_details;
     CheckBox diposit, withdraw;
     Button submit, viewdata, viewAccounts,delete;
     RadioGroup radioGroup;
@@ -39,12 +39,12 @@ public class MainActivity extends AppCompatActivity {
         edit_account_number = (EditText) findViewById(R.id.editText_account_number);
         edit_amount = (EditText) findViewById(R.id.editText_amount);
         edit_details = (EditText) findViewById(R.id.editText_details);
-        edit_type = (EditText) findViewById(R.id.editText_type);
         submit = (Button) findViewById(R.id.button_submit);
         delete = (Button) findViewById(R.id.button_delete);
         viewdata = (Button) findViewById(R.id.button_viewdata);
         viewAccounts = (Button) findViewById(R.id.button_accounts);
         radioGroup = (RadioGroup)findViewById(R.id.radioGroup_type);
+
 
 
 
@@ -67,20 +67,22 @@ public class MainActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm:ss");
         final String date = mdformat.format(calendar.getTime());
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         final String time = dateFormat.format(calendar.getTime());
+
+
+
         submit.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
+                         radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
+                         String type = (String) radioButton.getText();
                          String account_number = edit_account_number.getText().toString();
-                         String type = edit_type.getText().toString();
                          String amount = edit_amount.getText().toString();
                          String details = edit_details.getText().toString();
                          String agent_id = "00001"; //hardcoded agent_id
                          String charges =  CalculateCharges(account_number,amount);
-
                         if (charges.equals("0")){
                             if (myDB.UpdateCurrentBalance(account_number,amount,type)){
                                 boolean isInserted = myDB.insertToTransactions(account_number, type, date, time, amount, details, charges);
@@ -99,12 +101,9 @@ public class MainActivity extends AppCompatActivity {
                                     myDB.DeleteAll("transactions");
                                 }
                             }
-
                             else{
                                 makeText(MainActivity.this, "Account balance is not enough", Toast.LENGTH_LONG).show();
                             }
-
-
                         }
                         else{
                             SendToTransactions(account_number,agent_id, type, time, date, amount, details, charges);
@@ -132,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
                         Cursor result = myDB.getAllData();
                         if (result.getCount() == 0) {
                             showMessage("Error", "Nothing found");
-
                             return;
                         }
 
@@ -146,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
                             buffer.append("Details :" + result.getString(6) + "\n");
                             buffer.append("charges :" + result.getString(7) + "\n\n");
                         }
-
                         showMessage("Data",buffer.toString());
                     }
 
@@ -165,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
                             showMessage("Error", "Nothing found");
                             return;
                         }
-
                         StringBuffer buffer = new StringBuffer();
                         while (result.moveToNext()) {
                             buffer.append("Account number : " + result.getString(0) + "\n");
@@ -175,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
                             buffer.append("Current balance :" + result.getString(4) + "\n");
                             buffer.append("Account details :" + result.getString(5) + "\n\n");
                         }
-
                         showMessage("Accounts",buffer.toString());
                     }
 

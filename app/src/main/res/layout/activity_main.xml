@@ -132,27 +132,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Deposit" />
+            android:text="deposit" />
 
         <RadioButton
             android:id="@+id/radioButton_withdraw"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Withdraw" />
+            android:text="withdraw" />
 
     </RadioGroup>
-
-    <EditText
-        android:id="@+id/editText_type"
-        android:layout_width="83dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
-        app:layout_constraintStart_toEndOf="@+id/radioGroup_type" />
 
     <Button
         android:id="@+id/button_delete"

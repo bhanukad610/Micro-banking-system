@@ -143,7 +143,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean UpdateCurrentBalance(String account_number, String amount, String type){
         float value = Float.valueOf(amount);
-        System.out.println(value);
         SQLiteDatabase db = this.getWritableDatabase();
         String get_current_balance = "select current_balance ,amount from accounts natural join minimum_balance where account_number = " + account_number;
         Cursor cursor = db.rawQuery(get_current_balance, null);
@@ -153,7 +152,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             float minimum_balance = Float.valueOf(cursor.getString(1));
             if (type.equals("deposit")){
                 current_balance = current_balance + value;
-                System.out.println(current_balance);
                 String query = "UPDATE " + ACCOUNTS_TABLE + " SET " + COL_5 + "=" + current_balance + " WHERE account_number = "+account_number;
                 db.execSQL(query);
                 return true;
@@ -161,7 +159,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (type.equals("withdraw")){
                 current_balance = current_balance - value;
                 if (current_balance >= minimum_balance){
-                    System.out.println(current_balance);
                     String query = "UPDATE " + ACCOUNTS_TABLE + " SET " + COL_5 + "=" + current_balance + " WHERE account_number = "+account_number;
                     db.execSQL(query);
                     return true;
@@ -169,9 +166,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 else{
                     return false;
                 }
-
             }
-
         }
 
         return false;
