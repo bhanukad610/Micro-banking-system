@@ -32,20 +32,25 @@ INSERT INTO customers (NIC, name, telephone, address, agent_id) VALUES ('9874521
 INSERT INTO customers (NIC, name, telephone, address, agent_id) VALUES ('854754559Q', 'Draco Malfoy', '0778459624', 'London', '00002');
 
 
-INSERT INTO accounts (acountNumber,cutomerNIC, accountType, status, currentBalance, accountDetails, branch_number) VALUES ('160137', '962232531V','children','ok', 5000.00, 'good', '0001');
-INSERT INTO accounts (acountNumber,cutomerNIC, accountType,status, currentBalance, accountDetails, branch_number) VALUES ('160456', '987452121R','adult', 'ok', 5000.00, 'good', '0002');
+INSERT INTO accounts VALUES ('160137','children','ok', 5000.00, 'good', '0001');
+INSERT INTO accounts VALUES ('160456','adult', 'ok', 5000.00, 'good', '0002');
 
-INSERT INTO jointAccounts (acountNumber,cutomerNIC, status, currentBalance, accountDetails, branch_number) VALUES ('160123', '962232531V', 'ok', 5000.00, 'good', '0001');
-INSERT INTO jointAccounts (acountNumber,cutomerNIC, status, currentBalance, accountDetails, branch_number) VALUES ('160712', '987452121R','ok', 4000.00, 'good', '0002');
+INSERT INTO jointAccounts (accountNumber,cutomerNIC, status, currentBalance, accountDetails, branch_number) VALUES ('160123', '962232531V', 'ok', 5000.00, 'good', '0001');
+INSERT INTO jointAccounts (accountNumber,cutomerNIC, status, currentBalance, accountDetails, branch_number) VALUES ('160712', '987452121R','ok', 4000.00, 'good', '0002');
 
-INSERT INTO jointAccountHolders ( acountNumber, cutomerNIC)
+INSERT INTO jointAccountHolders ( accountNumber, cutomerNIC)
 VALUES ( '160137', '962232531V');
-INSERT INTO jointAccountHolders ( acountNumber, cutomerNIC)
+INSERT INTO jointAccountHolders ( accountNumber, cutomerNIC)
 VALUES ( '160456', '987452121R');
 
 
-INSERT INTO fixedAccounts (acountNumber,cutomerNIC, status, duration, currentBalance, accountDetails, branch_number) VALUES ('160789', '962232531V', 'ok', 6, 5000.00, 'good', '0001');
-INSERT INTO fixedAccounts (acountNumber,cutomerNIC, status, duration, currentBalance, accountDetails, branch_number) VALUES ('160497', '854754559Q', 'ok', 12, 10000.00, 'good', '0002');
+INSERT INTO fixedAccounts (accountNumber,cutomerNIC, status, duration, currentBalance, accountDetails, branch_number) VALUES ('160789', '962232531V', 'ok', 6, 5000.00, 'good', '0001');
+INSERT INTO fixedAccounts (accountNumber,cutomerNIC, status, duration, currentBalance, accountDetails, branch_number) VALUES ('160497', '854754559Q', 'ok', 12, 10000.00, 'good', '0002');
+
+INSERT INTO `transactions` VALUES (NULL, '160137', '00001', 'deposit', '2018-11-12', '12:45:47', '100', 'test', '120')
+,(NULL, '160456', '00001', 'deposit', '2018-11-12', '12:45:47', '100', 'test', '120'),
+(NULL, '160137', '00001', 'withdraw', '2018-11-17', '10:45:47', '100', 'test', '120'),
+(NULL, '160456', '00002', 'deposit', '2018-11-12', '12:40:47', '100', 'test', '120');
 
 
 

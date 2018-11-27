@@ -6,6 +6,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.Cursor;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "mobileDB";
@@ -14,7 +18,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String MINIMUM_BALANCE = "minimum_balance";
 
     public static final String COL_1 = "account_number";
-    public static final String COL_2 = "customer_NIC";
     public static final String COL_3 = "account_Type";
     public static final String COL_4 = "status";
     public static final String COL_5 = "current_balance";
@@ -40,7 +43,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + ACCOUNTS_TABLE + "(" +
                 "account_number INTEGER PRIMARY KEY, " +
-                "customer_NIC TEXT, " +
                 "account_type TEXT, " +
                 "status TEXT, " +
                 "current_balance DECIMAL, " +
@@ -64,6 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists " + ACCOUNTS_TABLE );
@@ -72,17 +75,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertToAccounts(String account_number, String customer_NIC, String account_Type, String status, String current_balance, String account_details){
+    public boolean insertToAccounts(String data) {
+        System.out.println("from databasehelper :"+data);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_1, account_number);
-        contentValues.put(COL_2, customer_NIC);
-        contentValues.put(COL_3, account_Type);
-        contentValues.put(COL_4, status);
-        contentValues.put(COL_5, current_balance);
-        contentValues.put(COL_6, account_details);
-        long isInsert = db.insert(ACCOUNTS_TABLE, null, contentValues);
-        return isInsert != -1;
+
+        try {
+            JSONObject jsonObj = new JSONObject(data);
+            JSONArray contacts = jsonObj.getJSONArray("accounts");
+            System.out.println("from databasehelper :"+contacts);
+
+            for (int i = 0; i < contacts.length(); i++) {
+                JSONObject c = contacts.getJSONObject(i);
+
+                String account_number = c.getString("accountNumber");
+
+                System.out.println("from databasehelper :"+account_number);
+                String accountType = c.getString("accountType");
+                String status = c.getString("status");
+                String currentBalance = c.getString("currentBalance");
+                String accountDetails = c.getString("accountDetails");
+
+                contentValues.put(COL_1, account_number);
+                contentValues.put(COL_3, accountType);
+                contentValues.put(COL_4, status);
+                contentValues.put(COL_5, currentBalance);
+                contentValues.put(COL_6, accountDetails);
+                long isInsert = db.insert(ACCOUNTS_TABLE, null, contentValues);
+                return isInsert != -1;
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return false;
     }
 
     public boolean insertToMinimumBalance(String account_type, String amount){
@@ -152,9 +180,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             float minimum_balance = Float.valueOf(cursor.getString(1));
             if (type.equals("deposit")){
                 current_balance = current_balance + value;
+                if (current_balance >= minimum_balance){
                 String query = "UPDATE " + ACCOUNTS_TABLE + " SET " + COL_5 + "=" + current_balance + " WHERE account_number = "+account_number;
                 db.execSQL(query);
                 return true;
+                }
             }
             if (type.equals("withdraw")){
                 current_balance = current_balance - value;

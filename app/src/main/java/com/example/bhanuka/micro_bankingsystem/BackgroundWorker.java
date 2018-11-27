@@ -4,6 +4,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -17,19 +21,24 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 public class BackgroundWorker extends AsyncTask<String, Void, String> {
+    DatabaseHelper myDB;
     Context context;
     AlertDialog alertDialog;
 
     BackgroundWorker(Context ctx){
         context = ctx;
+        myDB = new DatabaseHelper(ctx);
     }
 
 
-    @Override
-    protected String doInBackground(String... params) {
+
+    public String doInBackground(String... params) {
+
         String type = params[0];
         String sendToTransactions_url = "https://gringottsapp.000webhostapp.com/sendToTransactions.php";
+        String getFromAccounts_url = "https://gringottsapp.000webhostapp.com/getFromAccounts.php";
 
+        String out = null;
         if (type.equals("sendToTransactions")){
             try {
                 String account_number = params[1];
@@ -78,14 +87,46 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
             }
         }
 
+        if (type.equals("getFromAccounts")){
 
+            try {
+                URL url = new URL(getFromAccounts_url);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("GET");
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setDoInput(true);
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
+
+                String line = "";
+                String result = "";
+
+                while ((line = bufferedReader.readLine()) != null){
+                    result += line;
+                }
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+                myDB.DeleteAll("accounts");
+                myDB.insertToAccounts(result);
+                return result;
+            }
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+
+            }
+
+        }
         return null;
     }
 
     @Override
     protected void onPreExecute() {
         alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Sending data status");
+        alertDialog.setTitle("From Central Server");
 
     }
 

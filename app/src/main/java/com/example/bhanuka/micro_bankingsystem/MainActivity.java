@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDB;
     EditText edit_account_number, edit_amount, edit_details;
     CheckBox diposit, withdraw;
-    Button submit, viewdata, viewAccounts,delete;
+    Button submit, viewdata, viewAccounts,delete,refresh;
     RadioGroup radioGroup;
     RadioButton radioButton;
 
@@ -45,21 +45,22 @@ public class MainActivity extends AppCompatActivity {
         viewAccounts = (Button) findViewById(R.id.button_accounts);
         radioGroup = (RadioGroup)findViewById(R.id.radioGroup_type);
 
-
-
-
         AddData();
         ViewData();
         ViewAccounts();
         DeleteData();
 
+        GetFromAccounts();
 
-        AddToAccounts("160137", "962232531v","children", "ok","5000.00","good");
+
+        //AddToAccounts("160137", "962232531v","children", "ok","5000.00","good");
+
         myDB.insertToMinimumBalance("children","0");
         myDB.insertToMinimumBalance("teen","500");
         myDB.insertToMinimumBalance("adult","1000");
         myDB.insertToMinimumBalance("senior","1000");
         myDB.insertToMinimumBalance("joint","5000");
+        //AddToAccounts();
 
     }
 
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                                         SendToTransactions(result.getString(1),agent_id, result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7));
                                     }
                                     myDB.DeleteAll("transactions");
+                                    //GetFromAccounts();
                                 }
                             }
                             else{
@@ -112,15 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
         );
-    }
-
-
-    public void AddToAccounts(String account_number, String customer_NIC, String account_type, String status, String current_balance, String account_details){
-        boolean inserted = myDB.insertToAccounts(account_number, customer_NIC, account_type, status, current_balance, account_details);
-        if (inserted = true)
-            System.out.println("successfully added to accounts");
-        else
-            System.out.println("error occurred");
     }
 
     public void ViewData(){
@@ -146,11 +139,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                         showMessage("Data",buffer.toString());
                     }
-
                 }
         );
     }
-
 
     public void ViewAccounts(){
         viewAccounts.setOnClickListener(
@@ -165,15 +156,13 @@ public class MainActivity extends AppCompatActivity {
                         StringBuffer buffer = new StringBuffer();
                         while (result.moveToNext()) {
                             buffer.append("Account number : " + result.getString(0) + "\n");
-                            buffer.append("Customer NIC : " + result.getString(1) + "\n");
-                            buffer.append("Type : " + result.getString(2) + "\n");
-                            buffer.append("Status :" + result.getString(3) + "\n");
-                            buffer.append("Current balance :" + result.getString(4) + "\n");
-                            buffer.append("Account details :" + result.getString(5) + "\n\n");
+                            buffer.append("Type : " + result.getString(1) + "\n");
+                            buffer.append("Status :" + result.getString(2) + "\n");
+                            buffer.append("Current balance :" + result.getString(3) + "\n");
+                            buffer.append("Account details :" + result.getString(4) + "\n\n");
                         }
                         showMessage("Accounts",buffer.toString());
                     }
-
                 }
         );
     }
@@ -198,11 +187,18 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-
     public void SendToTransactions(String account_number,String agent_id, String transactionType, String date, String time, String amount, String transactionDetails, String charges){
         String type = "sendToTransactions";
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);
         backgroundWorker.execute(type, account_number, agent_id, transactionType, date, time, amount, transactionDetails, charges);
+    }
+
+    public void GetFromAccounts(){
+        String type = "getFromAccounts";
+        BackgroundWorker backgroundWorker = new BackgroundWorker(this);
+        String data = String.valueOf(backgroundWorker.execute(type));
+        System.out.println("from mainactivity: "+data);
+
     }
 
     public String CalculateCharges(String account_number, String amount){
@@ -211,7 +207,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return String.valueOf(0);
     }
-
-
-
 }
