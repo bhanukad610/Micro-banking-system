@@ -83,9 +83,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             JSONObject jsonObj = new JSONObject(data);
             JSONArray contacts = jsonObj.getJSONArray("accounts");
-            System.out.println("from databasehelper :"+contacts);
+            System.out.println("from databasehelper :"+contacts.length()+contacts);
 
-            for (int i = 0; i < contacts.length(); i++) {
+            for (int i = 0; i <= contacts.length(); i++) {
                 JSONObject c = contacts.getJSONObject(i);
 
                 String account_number = c.getString("accountNumber");
@@ -101,8 +101,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 contentValues.put(COL_4, status);
                 contentValues.put(COL_5, currentBalance);
                 contentValues.put(COL_6, accountDetails);
-                long isInsert = db.insert(ACCOUNTS_TABLE, null, contentValues);
-                return isInsert != -1;
+                db.insert(ACCOUNTS_TABLE, null, contentValues);
+
             }
 
         } catch (JSONException e) {

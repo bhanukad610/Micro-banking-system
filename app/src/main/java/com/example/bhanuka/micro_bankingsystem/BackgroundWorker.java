@@ -90,16 +90,25 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
         if (type.equals("getFromAccounts")){
 
             try {
+
+                String agent_id = params[1];
+
                 URL url = new URL(getFromAccounts_url);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setRequestMethod("GET");
+                httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoOutput(true);
                 httpURLConnection.setDoInput(true);
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String post_data = URLEncoder.encode("agent_id","UTF-8")+"="+URLEncoder.encode(agent_id,"UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
                 InputStream inputStream = httpURLConnection.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
-
-                String line = "";
                 String result = "";
+                String line = "";
 
                 while ((line = bufferedReader.readLine()) != null){
                     result += line;
@@ -107,6 +116,7 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
                 bufferedReader.close();
                 inputStream.close();
                 httpURLConnection.disconnect();
+                myDB.DeleteAll("transactions");
                 myDB.DeleteAll("accounts");
                 myDB.insertToAccounts(result);
                 return result;
@@ -132,7 +142,13 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        alertDialog.setMessage(result);
+        if (result == null){
+            alertDialog.setMessage("connection error");
+        }
+        else {
+            alertDialog.setMessage(result);
+        }
+
         alertDialog.show();
     }
 

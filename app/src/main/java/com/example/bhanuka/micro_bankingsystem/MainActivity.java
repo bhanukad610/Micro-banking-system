@@ -50,17 +50,13 @@ public class MainActivity extends AppCompatActivity {
         ViewAccounts();
         DeleteData();
 
-        GetFromAccounts();
-
-
-        //AddToAccounts("160137", "962232531v","children", "ok","5000.00","good");
 
         myDB.insertToMinimumBalance("children","0");
         myDB.insertToMinimumBalance("teen","500");
         myDB.insertToMinimumBalance("adult","1000");
         myDB.insertToMinimumBalance("senior","1000");
         myDB.insertToMinimumBalance("joint","5000");
-        //AddToAccounts();
+
 
     }
 
@@ -70,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
         final String date = mdformat.format(calendar.getTime());
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         final String time = dateFormat.format(calendar.getTime());
-
-
 
         submit.setOnClickListener(
                 new View.OnClickListener() {
@@ -97,10 +91,12 @@ public class MainActivity extends AppCompatActivity {
                                 if (myDB.CountTransactions() >= 5){
                                     Cursor result = myDB.getAllData();
                                     while (result.moveToNext()){
-                                        SendToTransactions(result.getString(1),agent_id, result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7));
+                                        String feedback = SendToTransactions(result.getString(1),agent_id, result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7));
+                                        if (feedback == null){
+                                            return;
+                                        }
                                     }
-                                    myDB.DeleteAll("transactions");
-                                    //GetFromAccounts();
+                                    GetFromAccounts();
                                 }
                             }
                             else{
@@ -124,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                         Cursor result = myDB.getAllData();
                         if (result.getCount() == 0) {
                             showMessage("Error", "Nothing found");
+                            GetFromAccounts();
                             return;
                         }
 
@@ -187,17 +184,18 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    public void SendToTransactions(String account_number,String agent_id, String transactionType, String date, String time, String amount, String transactionDetails, String charges){
+    public String SendToTransactions(String account_number,String agent_id, String transactionType, String date, String time, String amount, String transactionDetails, String charges){
         String type = "sendToTransactions";
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-        backgroundWorker.execute(type, account_number, agent_id, transactionType, date, time, amount, transactionDetails, charges);
+        String data = String.valueOf(backgroundWorker.execute(type, account_number, agent_id, transactionType, date, time, amount, transactionDetails, charges));
+        return data;
     }
 
     public void GetFromAccounts(){
         String type = "getFromAccounts";
+        String agent_id = "00001";
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-        String data = String.valueOf(backgroundWorker.execute(type));
-        System.out.println("from mainactivity: "+data);
+        String data = String.valueOf(backgroundWorker.execute(type,agent_id));
 
     }
 
