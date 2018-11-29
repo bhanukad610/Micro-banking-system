@@ -14,7 +14,7 @@ from (accounts natural join AccountHolders) natural join customers;
 /*view for fixed accounts details with customer details*/
 create view if not exists fixed_accounts_with_customer_details as 
 select * 
-from (fixedAccounts natural join AccountHolders) natural join customers;
+from fixedAccounts natural join customers;
 
 /*agent details for customers*/
 create view if not exists agent_details_for_customers as 

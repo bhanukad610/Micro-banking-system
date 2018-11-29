@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         ViewAccounts();
         DeleteData();
 
-
         myDB.insertToMinimumBalance("children","0");
         myDB.insertToMinimumBalance("teen","500");
         myDB.insertToMinimumBalance("adult","1000");
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                          String account_number = edit_account_number.getText().toString();
                          String amount = edit_amount.getText().toString();
                          String details = edit_details.getText().toString();
-                         String agent_id = "00001"; //hardcoded agent_id
+                         String agent_id = "00002"; //hardcoded agent_id
                          String charges =  CalculateCharges(account_number,amount);
                         if (charges.equals("0")){
                             if (myDB.UpdateCurrentBalance(account_number,amount,type)){
@@ -193,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void GetFromAccounts(){
         String type = "getFromAccounts";
-        String agent_id = "00001";
+        String agent_id = "00002";
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);
         String data = String.valueOf(backgroundWorker.execute(type,agent_id));
 

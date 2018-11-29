@@ -30,6 +30,8 @@ create table if not exists bankingAgents(
     branch_number varchar(10),
     primary key (agent_id),
     foreign key (branch_number) references branches(branch_number)
+	on delete cascade
+	on update cascade
 );
 
 create table if not exists customers(
@@ -46,33 +48,48 @@ create table if not exists accounts(
     accountNumber varchar(10),
     accountType ENUM('children', 'teen', 'adult', 'senior','joint'),
     status varchar(5),
+    open_date DATE NOT NULL,
     currentBalance decimal(15,2),
     accountDetails varchar(200),
     branch_number varchar(10),
     primary key (accountNumber),
     foreign key (branch_number) references branches(branch_number)
+	on delete cascade
+	on update cascade
+
 );
 
 create table if not exists AccountHolders(
     accountNumber varchar(10),
     customerNIC varchar(10),
     primary key (accountNumber, customerNIC),
-    foreign key (accountNumber) references accounts(accountNumber),
+    foreign key (accountNumber) references accounts(accountNumber)
+	on delete cascade
+	on update cascade,
     foreign key (customerNIC) references customers(customerNIC)
+	on delete cascade
+	on update cascade
 );
 
 create table if not exists fixedAccounts(
+    FaccountNumber varchar(10),
     accountNumber varchar(10),
     customerNIC varchar(10),
     status varchar(5),
+    open_date DATE NOT NULL,
     duration int,
     currentBalance decimal(15,2),
     accountDetails varchar(200),
     branch_number varchar(10),
-    primary key (accountNumber),
-    foreign key (customerNIC) references customers(customerNIC),
+    primary key (FaccountNumber),
+    foreign key (customerNIC) references customers(customerNIC)
+	on delete cascade
+	on update cascade,
     foreign key (duration) references fixedInterestRates(duration),
     foreign key (branch_number) references branches(branch_number)
+	on delete cascade
+	on update cascade
+	
 );
 
 create table if not exists transactions(
@@ -86,6 +103,8 @@ create table if not exists transactions(
     details varchar(100),
     charges decimal(15,2),
     primary key (transactionID),
-    foreign key (accountNumber) references accounts(accountNumber),
+    foreign key (accountNumber) references accounts(accountNumber)
+	on delete cascade
+	on update cascade,
     foreign key (agent_id) references bankingAgents(agent_id)
 );
